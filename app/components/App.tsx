@@ -14,11 +14,6 @@ const App: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [progressBarColor, setProgressBarColor] = useState('bg-blue-500');
-  const [debugConsumptionStep, setDebugConsumptionStep] = useState(0);
-
-  // Define calorie consumption steps (0 to 1800 in 6 steps)
-  const consumptionSteps = [0, 360, 720, 1080, 1440, 1800];
 
   // Simulate checking if user is logged in
   useEffect(() => {
@@ -112,44 +107,6 @@ const App: React.FC = () => {
     }
   };
 
-  // Debug function to cycle through consumption steps and toggle progress bar color
-  const handleDebugClick = () => {
-    // Cycle through consumption steps
-    const nextStep = (debugConsumptionStep + 1) % consumptionSteps.length;
-    setDebugConsumptionStep(nextStep);
-
-    // Toggle progress bar color
-    setProgressBarColor(progressBarColor === 'bg-blue-500' ? 'bg-purple-500' : 'bg-blue-500');
-
-    // Update user data with new consumption value
-    if (userData) {
-      const updatedUserData = { ...userData };
-
-      // Update the latest calorie history entry
-      if (updatedUserData.calorieHistory.length > 0) {
-        const latestEntry = { ...updatedUserData.calorieHistory[updatedUserData.calorieHistory.length - 1] };
-
-        // Only update the consumed value, keep the budget fixed at 1800
-        latestEntry.consumed = consumptionSteps[nextStep];
-        latestEntry.budget = 1800; // Fixed budget value
-
-        updatedUserData.calorieHistory[updatedUserData.calorieHistory.length - 1] = latestEntry;
-      }
-
-      setUserData(updatedUserData);
-    }
-  };
-
-  // Calculate consumed calories for the debug button
-  const getDebugCalorieText = () => {
-    if (!userData || !userData.calorieHistory || userData.calorieHistory.length === 0) {
-      return '0 / 1800 kcal';
-    }
-
-    const latestEntry = userData.calorieHistory[userData.calorieHistory.length - 1];
-    return `${latestEntry.consumed} / 1800 kcal`;
-  };
-
   // Render error state
   if (error) {
     return (
@@ -182,7 +139,7 @@ const App: React.FC = () => {
     console.log('Rendering screen:', currentScreen);
     switch (currentScreen) {
       case 'onboarding':
-        return <OnboardingFlow onComplete={handleCompleteOnboarding} progressBarColor={progressBarColor} />;
+        return <OnboardingFlow onComplete={handleCompleteOnboarding} />;
       case 'dashboard':
         return userData ? <Dashboard userData={userData} /> : null;
       case 'charts':
@@ -190,20 +147,12 @@ const App: React.FC = () => {
       case 'settings':
         return userData ? <SettingsScreen userData={userData} onLogout={handleLogout} onBack={() => setCurrentScreen('dashboard')} /> : null;
       default:
-        return <OnboardingFlow onComplete={handleCompleteOnboarding} progressBarColor={progressBarColor} />;
+        return <OnboardingFlow onComplete={handleCompleteOnboarding} />;
     }
   };
 
   return (
     <div className="h-screen flex flex-col bg-gray-50">
-      {/* Debug button */}
-      <button
-        onClick={handleDebugClick}
-        className="absolute top-4 right-4 bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors duration-200 z-50"
-      >
-        Debug ({getDebugCalorieText()})
-      </button>
-
       {renderScreen()}
       
       {/* Always show navigation bar in all views */}

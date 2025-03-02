@@ -3,10 +3,9 @@ import React from 'react';
 interface ProgressBarProps {
   currentStep: number;
   totalSteps: number;
-  color?: string;
 }
 
-const ProgressBar: React.FC<ProgressBarProps> = ({ currentStep, totalSteps, color = 'bg-blue-500' }) => {
+const ProgressBar: React.FC<ProgressBarProps> = ({ currentStep, totalSteps }) => {
   const getStepColor = (index: number) => {
     // Calculate percentage thresholds based on total steps
     const greenThreshold = Math.floor(totalSteps * 0.8); // 0-80%
