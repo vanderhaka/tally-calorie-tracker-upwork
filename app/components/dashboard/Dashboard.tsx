@@ -138,11 +138,11 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
 
           {/* Improved Calorie Progress Bar */}
           <div className="relative h-4 mb-2 rounded-full overflow-hidden bg-gray-200">
-            {/* Gradient background - fixed from 0 to 1800 kcal */}
+            {/* Gradient background - fixed from 0 to 1800 kcal with compressed red and orange zones */}
             <div className="absolute top-0 left-0 w-full h-full flex">
-              <div className="w-1/3 h-full bg-gradient-to-r from-green-500 to-green-400"></div>
-              <div className="w-1/3 h-full bg-gradient-to-r from-green-400 to-yellow-500"></div>
-              <div className="w-1/3 h-full bg-gradient-to-r from-yellow-500 to-red-500"></div>
+              <div className="w-4/5 h-full bg-gradient-to-r from-green-500 to-green-400"></div>
+              <div className="w-[10%] h-full bg-gradient-to-r from-green-400 to-orange-500"></div>
+              <div className="w-[10%] h-full bg-gradient-to-r from-orange-500 to-red-600"></div>
             </div>
 
             {/* Indicator for the amount consumed */}

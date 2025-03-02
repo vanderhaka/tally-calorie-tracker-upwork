@@ -44,6 +44,17 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, progressBar
     onComplete(userData);
   };
 
+  // Get the step title based on current step
+  const getStepTitle = () => {
+    switch (step) {
+      case 1: return "Account Setup";
+      case 2: return "Personal Information";
+      case 3: return "Weight Goals";
+      case 4: return "Daily Plan";
+      default: return "";
+    }
+  };
+
   const renderStepContent = () => {
     switch (step) {
       case 1:
@@ -65,7 +76,10 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, progressBar
       <div className="bg-white p-4 shadow-sm">
         <div className="flex justify-between items-center">
           <h1 className="text-xl font-bold text-gray-800">Tally</h1>
-          <ProgressBar currentStep={step} totalSteps={4} color={progressBarColor} />
+          <div className="flex flex-col items-end">
+            <div className="text-sm text-gray-600 mb-1">Step {step} of 4: {getStepTitle()}</div>
+            <ProgressBar currentStep={step} totalSteps={4} color={progressBarColor} />
+          </div>
         </div>
       </div>
 
@@ -73,8 +87,8 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, progressBar
         {renderStepContent()}
       </div>
 
-      {/* Bottom action button */}
-      <div className="bg-white p-4 border-t">
+      {/* Bottom action button - added z-20 to ensure it appears above the navigation bar */}
+      <div className="bg-white p-4 border-t relative z-20">
         {step < 4 ? (
           <button
             onClick={handleNext}
