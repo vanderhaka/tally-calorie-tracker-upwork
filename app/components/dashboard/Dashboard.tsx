@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UserData } from '../../types';
 
 interface DashboardProps {
@@ -71,6 +71,42 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
     }
   };
 
+  // For the assistant chat
+  const [showAssistant, setShowAssistant] = useState(false);
+  const [assistantMessage, setAssistantMessage] = useState('');
+
+  // Sample assistant messages
+  const assistantMessages = [
+    "Have you had any snacks today that you haven't logged yet?",
+    "Don't forget to log your weight today! It helps track your progress.",
+    "How was your breakfast today? Did you get enough protein?",
+    "You're doing great! Remember to stay hydrated throughout the day.",
+    "Would you like some healthy lunch suggestions based on your remaining calories?",
+    "Time for a mid-day check-in! Have you logged all your meals so far?",
+  ];
+
+  // Set a random assistant message when component mounts or when showAssistant changes
+  useEffect(() => {
+    if (showAssistant) {
+      const randomIndex = Math.floor(Math.random() * assistantMessages.length);
+      setAssistantMessage(assistantMessages[randomIndex]);
+    }
+  }, [showAssistant]);
+
+  // Show assistant after component mounts
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowAssistant(true);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Function to dismiss the assistant
+  const dismissAssistant = () => {
+    setShowAssistant(false);
+  };
+
   return (
     <>
       {/* Header */}
@@ -79,14 +115,14 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
           <h1 className="text-xl font-bold text-gray-800">Tally</h1>
           <div className="text-sm text-gray-600">{today}</div>
         </div>
-        
+
         {/* Calorie Summary */}
         <div className="mt-3">
           <div className="flex justify-between text-sm mb-1">
             <div>Consumed: {todayCalories.consumed} kcal</div>
             <div>{caloriesRemaining} kcal remaining</div>
           </div>
-          
+
           {/* Improved Calorie Progress Bar */}
           <div className="relative h-4 mb-2 rounded-full overflow-hidden bg-gray-200">
             {/* Gradient background - fixed from 0 to 1800 kcal */}
@@ -95,12 +131,12 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
               <div className="w-1/3 h-full bg-gradient-to-r from-green-400 to-yellow-500"></div>
               <div className="w-1/3 h-full bg-gradient-to-r from-yellow-500 to-red-500"></div>
             </div>
-            
+
             {/* Indicator for the amount consumed */}
             {todayCalories.consumed > 0 && (
-              <div 
+              <div
                 className="absolute top-0 left-0 flex items-center h-full"
-                style={{ 
+                style={{
                   left: `${Math.min(calorieProgressPercent, 98)}%`,
                   transform: 'translateX(-50%)',
                   transition: 'left 0.5s ease-in-out'
@@ -112,17 +148,17 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
                 </div>
               </div>
             )}
-            
+
             {/* Progress fill */}
-            <div 
+            <div
               className="absolute top-0 left-0 h-full bg-transparent"
-              style={{ 
+              style={{
                 width: `${Math.min(calorieProgressPercent, 100)}%`,
                 transition: 'width 0.5s ease-in-out'
               }}
             ></div>
           </div>
-          
+
           {/* Calorie legend - fixed from 0 to 1800 */}
           <div className="flex justify-between text-xs text-gray-500 px-1">
             <div>0</div>
@@ -131,18 +167,18 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
           </div>
         </div>
       </div>
-      
+
       {/* Conversation Area */}
       <div className="flex-1 p-4 overflow-y-auto">
         {conversations.map((message, index) => (
-          <div 
-            key={index} 
+          <div
+            key={index}
             className={`mb-4 ${message.role === 'user' ? 'text-right' : 'text-left'}`}
           >
-            <div 
+            <div
               className={`inline-block p-3 rounded-lg ${
-                message.role === 'user' 
-                  ? 'bg-blue-500 text-white rounded-br-none' 
+                message.role === 'user'
+                  ? 'bg-blue-500 text-white rounded-br-none'
                   : 'bg-gray-200 text-gray-800 rounded-bl-none'
               }`}
             >
@@ -151,7 +187,7 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
           </div>
         ))}
       </div>
-      
+
       {/* Input Area */}
       <div className="bg-white p-4 border-t">
         <div className="flex items-center">
@@ -169,7 +205,7 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
             placeholder="Log a meal, weight, or ask a question..."
             className="flex-1 border rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <button 
+          <button
             onClick={handleSendMessage}
             className="ml-2 text-blue-500 focus:outline-none"
           >
@@ -179,6 +215,34 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
           </button>
         </div>
       </div>
+
+      {/* Assistant Chat Bubble */}
+      {showAssistant && (
+        <div className="fixed bottom-20 right-4 max-w-xs bg-blue-50 p-4 rounded-lg shadow-lg border border-blue-200 animate-fade-in">
+          <div className="flex justify-between items-start mb-2">
+            <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
+              T
+            </div>
+            <button
+              onClick={dismissAssistant}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              ×
+            </button>
+          </div>
+          <div className="text-gray-700">
+            {assistantMessage}
+          </div>
+          <div className="mt-3 flex space-x-2">
+            <button onClick={dismissAssistant} className="text-xs text-blue-600 hover:text-blue-800">
+              Respond
+            </button>
+            <button onClick={dismissAssistant} className="text-xs text-gray-500 hover:text-gray-700">
+              Dismiss
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 };
