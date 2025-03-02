@@ -86,10 +86,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
       <div className="bg-white p-4 shadow-sm">
         <div className="flex justify-between items-center">
           <h1 className="text-xl font-bold text-gray-800">Tally</h1>
-          <div className="flex flex-col items-end">
-            <div className="text-sm text-gray-600 mb-1">Step {step} of 4: {getStepTitle()}</div>
-            <ProgressBar currentStep={step} totalSteps={4} />
-          </div>
+          {/* Step indicator text and progress bar removed as it's no longer needed */}
         </div>
       </div>
 
