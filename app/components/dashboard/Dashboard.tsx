@@ -71,11 +71,7 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
     }
   };
 
-  // For the assistant chat
-  const [showAssistant, setShowAssistant] = useState(false);
-  const [assistantMessage, setAssistantMessage] = useState('');
-
-  // Sample assistant messages
+  // Sample assistant suggestion messages
   const assistantMessages = [
     "Have you had any snacks today that you haven't logged yet?",
     "Don't forget to log your weight today! It helps track your progress.",
@@ -85,27 +81,44 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
     "Time for a mid-day check-in! Have you logged all your meals so far?",
   ];
 
-  // Set a random assistant message when component mounts or when showAssistant changes
+  // Send periodic suggestions from the assistant
   useEffect(() => {
-    if (showAssistant) {
-      const randomIndex = Math.floor(Math.random() * assistantMessages.length);
-      setAssistantMessage(assistantMessages[randomIndex]);
+    // Only send a suggestion if there's at least one message and the last message is not from the assistant
+    const shouldSendSuggestion = 
+      conversations.length > 0 && 
+      conversations[conversations.length - 1].role !== 'assistant';
+    
+    if (shouldSendSuggestion) {
+      const timer = setTimeout(() => {
+        const randomIndex = Math.floor(Math.random() * assistantMessages.length);
+        const suggestionMessage = assistantMessages[randomIndex];
+        
+        setConversations(prevConversations => [
+          ...prevConversations,
+          { role: 'assistant', content: suggestionMessage }
+        ]);
+      }, 5000); // Show a suggestion after 5 seconds of inactivity
+      
+      return () => clearTimeout(timer);
     }
-  }, [showAssistant]);
+  }, [conversations]);
 
-  // Show assistant after component mounts
+  // Send initial suggestion after component mounts
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowAssistant(true);
-    }, 2000);
-
-    return () => clearTimeout(timer);
+    if (conversations.length === 1) {
+      const timer = setTimeout(() => {
+        const randomIndex = Math.floor(Math.random() * assistantMessages.length);
+        const suggestionMessage = assistantMessages[randomIndex];
+        
+        setConversations(prevConversations => [
+          ...prevConversations,
+          { role: 'assistant', content: suggestionMessage }
+        ]);
+      }, 3000); // Show first suggestion after 3 seconds
+      
+      return () => clearTimeout(timer);
+    }
   }, []);
-
-  // Function to dismiss the assistant
-  const dismissAssistant = () => {
-    setShowAssistant(false);
-  };
 
   return (
     <>
@@ -168,13 +181,20 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
         </div>
       </div>
 
-      {/* Conversation Area */}
-      <div className="flex-1 p-4 overflow-y-auto">
+      {/* Conversation Area - with padding for the fixed navigation bar */}
+      <div className="flex-1 p-4 overflow-y-auto pb-20">
         {conversations.map((message, index) => (
           <div
             key={index}
             className={`mb-4 ${message.role === 'user' ? 'text-right' : 'text-left'}`}
           >
+            {message.role === 'assistant' && (
+              <div className="flex items-start mb-1">
+                <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold mr-2">
+                  T
+                </div>
+              </div>
+            )}
             <div
               className={`inline-block p-3 rounded-lg ${
                 message.role === 'user'
@@ -189,7 +209,7 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
       </div>
 
       {/* Input Area */}
-      <div className="bg-white p-4 border-t">
+      <div className="bg-white p-4 border-t fixed bottom-0 left-0 right-0 z-10" style={{ marginBottom: '56px' }}>
         <div className="flex items-center">
           <button className="text-gray-500 focus:outline-none mr-2">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -215,34 +235,6 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
           </button>
         </div>
       </div>
-
-      {/* Assistant Chat Bubble */}
-      {showAssistant && (
-        <div className="fixed bottom-20 right-4 max-w-xs bg-blue-50 p-4 rounded-lg shadow-lg border border-blue-200 animate-fade-in">
-          <div className="flex justify-between items-start mb-2">
-            <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
-              T
-            </div>
-            <button
-              onClick={dismissAssistant}
-              className="text-gray-400 hover:text-gray-600"
-            >
-              ×
-            </button>
-          </div>
-          <div className="text-gray-700">
-            {assistantMessage}
-          </div>
-          <div className="mt-3 flex space-x-2">
-            <button onClick={dismissAssistant} className="text-xs text-blue-600 hover:text-blue-800">
-              Respond
-            </button>
-            <button onClick={dismissAssistant} className="text-xs text-gray-500 hover:text-gray-700">
-              Dismiss
-            </button>
-          </div>
-        </div>
-      )}
     </>
   );
 };

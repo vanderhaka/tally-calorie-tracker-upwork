@@ -36,7 +36,7 @@ const ChartsScreen: React.FC<ChartsScreenProps> = ({ userData, onBack }) => {
       </div>
       
       {/* Charts Content */}
-      <div className="flex-1 p-4 overflow-y-auto">
+      <div className="flex-1 p-4 overflow-y-auto pb-20">
         {/* Weight Chart */}
         <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
           <h2 className="text-lg font-medium mb-3">Weight Progress</h2>

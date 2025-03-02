@@ -26,7 +26,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({ userData, onLogout, onB
       </div>
       
       {/* Settings Content */}
-      <div className="flex-1 p-4 overflow-y-auto">
+      <div className="flex-1 p-4 overflow-y-auto pb-20">
         {/* Profile Section */}
         <div className="bg-white rounded-lg shadow-sm mb-4">
           <div className="p-4 border-b">

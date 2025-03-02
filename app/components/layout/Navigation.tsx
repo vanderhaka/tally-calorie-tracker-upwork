@@ -11,7 +11,7 @@ const Navigation: React.FC<NavigationProps> = ({
   onNavigate 
 }) => {
   return (
-    <div className="bg-white border-t flex justify-around py-3">
+    <div className="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around py-3 z-10">
       <button 
         onClick={() => onNavigate('dashboard')}
         className={`flex flex-col items-center focus:outline-none ${currentScreen === 'dashboard' ? 'text-blue-500' : 'text-gray-500'}`}
