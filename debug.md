@@ -78,6 +78,27 @@ To remove this feature before final release:
 2. Remove the animation CSS from globals.css and the Tailwind configuration
 3. Remove this documentation section from debug.md
 
+## Removed Weight Log and Always-Visible Navigation Bar
+
+The weight log has been removed from the Charts view, and the navigation bar is now consistently visible across all views of the app.
+
+### Implementation Details
+
+1. Removed the entire weight log section from the `ChartsScreen` component
+2. Removed the conditional rendering of the Navigation component in `App.tsx` to always show the navigation bar
+
+### How to Use
+
+1. The Charts view will no longer display the weight log
+2. The navigation bar will be visible at the bottom of the screen on all views
+
+### Removal Instructions
+
+To remove this feature before final release:
+
+1. Remove the code that removed the weight log from the `ChartsScreen` component
+2. Re-add the conditional rendering of the Navigation component in `App.tsx` to only show the navigation bar on certain views
+
 ## Other Debug Features
 
 Add any other debug features here as they are implemented.

@@ -194,7 +194,6 @@ const App: React.FC = () => {
     }
   };
 
-  // Only show navigation when logged in
   return (
     <div className="h-screen flex flex-col bg-gray-50">
       {/* Debug button */}
@@ -206,13 +205,12 @@ const App: React.FC = () => {
       </button>
 
       {renderScreen()}
-
-      {isLoggedIn && (
-        <Navigation
-          currentScreen={currentScreen}
-          onNavigate={setCurrentScreen}
-        />
-      )}
+      
+      {/* Always show navigation bar in all views */}
+      <Navigation 
+        currentScreen={currentScreen} 
+        onNavigate={setCurrentScreen} 
+      />
     </div>
   );
 };

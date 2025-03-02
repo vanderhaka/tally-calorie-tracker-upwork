@@ -139,25 +139,6 @@ const ChartsScreen: React.FC<ChartsScreenProps> = ({ userData, onBack }) => {
             })}
           </div>
         </div>
-        
-        {/* Weight log */}
-        <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
-          <h2 className="text-lg font-medium mb-3">Weight Log</h2>
-          <div className="divide-y">
-            {weightData.slice().reverse().map((entry, index) => (
-              <div key={index} className="py-2 flex justify-between">
-                <div className="text-gray-600">
-                  {new Date(entry.date).toLocaleDateString('en-US', { 
-                    month: 'long', 
-                    day: 'numeric',
-                    year: 'numeric'
-                  })}
-                </div>
-                <div className="font-medium">{entry.weight} lbs</div>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   );
