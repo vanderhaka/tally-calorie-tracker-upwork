@@ -223,7 +223,7 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             placeholder="Log a meal, weight, or ask a question..."
-            className="flex-1 border rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 border rounded-full py-2 px-4 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <button
             onClick={handleSendMessage}
