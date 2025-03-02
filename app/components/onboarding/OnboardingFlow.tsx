@@ -148,15 +148,6 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, progressBar
               );
             })}
           </div>
-          
-          {/* Progress line connecting the circles */}
-          <div className="relative mt-1">
-            <div className="absolute top-0 left-4 right-4 h-1 bg-gray-200 -mt-10 z-0"></div>
-            <div 
-              className="absolute top-0 left-4 h-1 bg-green-500 -mt-10 z-0 transition-all duration-300"
-              style={{ width: `${((step - 1) / 3) * (100 - 8 * 2)}%` }}
-            ></div>
-          </div>
         </div>
 
         {step < 4 ? (
