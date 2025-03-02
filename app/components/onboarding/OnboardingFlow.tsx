@@ -44,6 +44,14 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, progressBar
     onComplete(userData);
   };
 
+  // Navigate directly to a specific step
+  const goToStep = (stepNumber: number) => {
+    // Only allow going to a step if we've already been there or it's the next step
+    if (stepNumber <= step + 1) {
+      setStep(stepNumber);
+    }
+  };
+
   // Get the step title based on current step
   const getStepTitle = () => {
     switch (step) {
@@ -70,6 +78,9 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, progressBar
     }
   };
 
+  // Array of step titles for the interactive step indicator
+  const stepTitles = ["Account", "Info", "Goals", "Plan"];
+
   return (
     <div className="h-full flex flex-col bg-gray-50">
       {/* Progress indicator */}
@@ -87,8 +98,67 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, progressBar
         {renderStepContent()}
       </div>
 
-      {/* Bottom action button - added z-20 to ensure it appears above the navigation bar */}
+      {/* Bottom action button with interactive progress bar */}
       <div className="bg-white p-4 border-t relative z-20">
+        {/* Interactive Step Indicator */}
+        <div className="mb-4">
+          <div className="flex justify-between items-center mb-2">
+            {stepTitles.map((title, i) => {
+              const stepNum = i + 1;
+              const isActive = stepNum === step;
+              const isPast = stepNum < step;
+              const isFuture = stepNum > step;
+              const isAccessible = stepNum <= step + 1;
+
+              return (
+                <button
+                  key={i}
+                  onClick={() => isAccessible && goToStep(stepNum)}
+                  disabled={!isAccessible}
+                  className={`
+                    flex flex-col items-center justify-center relative
+                    ${isAccessible ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}
+                  `}
+                >
+                  {/* Circle indicator */}
+                  <div 
+                    className={`
+                      w-8 h-8 rounded-full flex items-center justify-center
+                      ${isActive ? 'bg-blue-500 text-white' : 
+                        isPast ? 'bg-green-500 text-white' : 
+                        'bg-gray-200 text-gray-500'}
+                      ${isAccessible && !isActive ? 'hover:bg-gray-300' : ''}
+                      mb-1 transition-colors
+                    `}
+                  >
+                    {isPast ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    ) : (
+                      stepNum
+                    )}
+                  </div>
+                  
+                  {/* Step title */}
+                  <span className={`text-xs ${isActive ? 'font-medium text-blue-500' : isPast ? 'font-medium text-green-500' : 'text-gray-500'}`}>
+                    {title}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+          
+          {/* Progress line connecting the circles */}
+          <div className="relative mt-1">
+            <div className="absolute top-0 left-4 right-4 h-1 bg-gray-200 -mt-10 z-0"></div>
+            <div 
+              className="absolute top-0 left-4 h-1 bg-green-500 -mt-10 z-0 transition-all duration-300"
+              style={{ width: `${((step - 1) / 3) * (100 - 8 * 2)}%` }}
+            ></div>
+          </div>
+        </div>
+
         {step < 4 ? (
           <button
             onClick={handleNext}
