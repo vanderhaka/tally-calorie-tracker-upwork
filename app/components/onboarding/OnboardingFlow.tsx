@@ -9,9 +9,10 @@ import { createUserData } from '../../utils/calculations';
 
 interface OnboardingFlowProps {
   onComplete: (userData: UserData) => void;
+  progressBarColor?: string;
 }
 
-const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
+const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, progressBarColor = 'bg-blue-500' }) => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<OnboardingFormData>({
     email: '',
@@ -64,7 +65,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
       <div className="bg-white p-4 shadow-sm">
         <div className="flex justify-between items-center">
           <h1 className="text-xl font-bold text-gray-800">Tally</h1>
-          <ProgressBar currentStep={step} totalSteps={4} />
+          <ProgressBar currentStep={step} totalSteps={4} color={progressBarColor} />
         </div>
       </div>
 

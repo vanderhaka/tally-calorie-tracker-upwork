@@ -21,6 +21,13 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
   // Get today's calorie data
   const todayCalories = userData.calorieHistory[userData.calorieHistory.length - 1];
   
+  // For testing, use a fixed total of 1800 kcal
+  const FIXED_TOTAL_CALORIES = 1800;
+  
+  // Calculate calorie progress percentage based on consumed amount out of fixed 1800 kcal
+  const calorieProgressPercent = Math.min((todayCalories.consumed / FIXED_TOTAL_CALORIES) * 100, 100);
+  const caloriesRemaining = FIXED_TOTAL_CALORIES - todayCalories.consumed;
+  
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
@@ -64,18 +71,6 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
     }
   };
 
-  // Calculate calorie progress percentage
-  const calorieProgressPercent = (todayCalories.consumed / todayCalories.budget) * 100;
-  const calorieColors = Array(18).fill('').map((_, i) => {
-    const itemPercent = (i + 1) * (100 / 18);
-    if (itemPercent <= calorieProgressPercent) {
-      if (calorieProgressPercent <= 60) return 'bg-green-500';
-      if (calorieProgressPercent <= 80) return 'bg-yellow-500';
-      return 'bg-red-500';
-    }
-    return 'bg-gray-200';
-  });
-
   return (
     <>
       {/* Header */}
@@ -88,15 +83,51 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
         {/* Calorie Summary */}
         <div className="mt-3">
           <div className="flex justify-between text-sm mb-1">
-            <div>Budget: {todayCalories.budget} kcal</div>
-            <div>{todayCalories.budget - todayCalories.consumed} kcal remaining</div>
+            <div>Consumed: {todayCalories.consumed} kcal</div>
+            <div>{caloriesRemaining} kcal remaining</div>
           </div>
           
-          {/* Calorie Progress Bar */}
-          <div className="flex h-4 mb-2 rounded-full overflow-hidden">
-            {calorieColors.map((color, i) => (
-              <div key={i} className={`${color} h-full w-full`}></div>
-            ))}
+          {/* Improved Calorie Progress Bar */}
+          <div className="relative h-4 mb-2 rounded-full overflow-hidden bg-gray-200">
+            {/* Gradient background - fixed from 0 to 1800 kcal */}
+            <div className="absolute top-0 left-0 w-full h-full flex">
+              <div className="w-1/3 h-full bg-gradient-to-r from-green-500 to-green-400"></div>
+              <div className="w-1/3 h-full bg-gradient-to-r from-green-400 to-yellow-500"></div>
+              <div className="w-1/3 h-full bg-gradient-to-r from-yellow-500 to-red-500"></div>
+            </div>
+            
+            {/* Indicator for the amount consumed */}
+            {todayCalories.consumed > 0 && (
+              <div 
+                className="absolute top-0 left-0 flex items-center h-full"
+                style={{ 
+                  left: `${Math.min(calorieProgressPercent, 98)}%`,
+                  transform: 'translateX(-50%)',
+                  transition: 'left 0.5s ease-in-out'
+                }}
+              >
+                {/* Glass circle indicator */}
+                <div className="w-6 h-6 rounded-full bg-white bg-opacity-30 backdrop-blur-sm border-2 border-white border-opacity-50 shadow-md transform -translate-y-1 flex items-center justify-center">
+                  <div className="w-3 h-3 rounded-full bg-white shadow-inner"></div>
+                </div>
+              </div>
+            )}
+            
+            {/* Progress fill */}
+            <div 
+              className="absolute top-0 left-0 h-full bg-transparent"
+              style={{ 
+                width: `${Math.min(calorieProgressPercent, 100)}%`,
+                transition: 'width 0.5s ease-in-out'
+              }}
+            ></div>
+          </div>
+          
+          {/* Calorie legend - fixed from 0 to 1800 */}
+          <div className="flex justify-between text-xs text-gray-500 px-1">
+            <div>0</div>
+            <div>900</div>
+            <div>1800</div>
           </div>
         </div>
       </div>
